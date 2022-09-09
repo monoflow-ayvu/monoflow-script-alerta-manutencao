@@ -1,27 +1,85 @@
 {
-  "name": "monoflow-script-env",
-  "version": "1.18.0",
-  "description": "Script padrão de todos os scripts. Template para criar um script.",
+  "name": "alerta-manutencao",
+  "version": "0.0.0",
+  "description": "Script para mostrar uma alerta ao ter tarefas especificas abertas",
   "settingsSchema": {
     "display": "form",
+    "settings": {
+      "pdf": {
+        "id": "1ec0f8ee-6685-5d98-a847-26f67b67d6f0",
+        "src": "https://files.form.io/pdf/5692b91fd1028f01000407e3/file/1ec0f8ee-6685-5d98-a847-26f67b67d6f0"
+      }
+    },
     "components": [
       {
-        "label": "Nome",
-        "description": "Nome para saludar",
-        "tableView": true,
-        "key": "name",
-        "type": "textfield",
+        "label": "Minutos para esperar até apresentar alarme",
+        "mask": false,
+        "tableView": false,
+        "delimiter": false,
+        "requireDecimal": false,
+        "inputFormat": "plain",
+        "truncateMultipleSpaces": false,
+        "validate": {
+          "required": true
+        },
+        "key": "minutes",
+        "type": "number",
         "input": true,
-        "defaultValue": "User"
+        "defaultValue": 5
       },
       {
-        "type": "button",
-        "label": "Submit",
-        "key": "submit",
-        "disableOnInvalid": true,
-        "block": true,
+        "label": "Tags",
+        "tableView": false,
+        "storeas": "array",
+        "validate": {
+          "required": true
+        },
+        "key": "tags",
+        "type": "tags",
+        "input": true
+      },
+      {
+        "label": "Título do alarme",
+        "autoExpand": false,
+        "tableView": true,
+        "defaultValue": "Tarefa pendente",
+        "validate": {
+          "required": true
+        },
+        "key": "title",
+        "type": "textfield",
+        "rows": 1,
+        "input": true
+      },
+      {
+        "label": "Mensagem do alarme",
+        "tableView": true,
+        "key": "message",
+        "type": "textfield",
+        "input": true
+      },
+      {
+        "label": "Acção OK",
+        "tooltip": "Texto do botão para dar OK",
+        "tableView": true,
+        "validate": {
+          "required": true
+        },
+        "key": "action",
+        "type": "textfield",
         "input": true,
-        "tableView": false
+        "defaultValue": "OK"
+      },
+      {
+        "label": "Submit",
+        "showValidations": false,
+        "block": true,
+        "disableOnInvalid": true,
+        "tableView": false,
+        "key": "submit",
+        "type": "button",
+        "input": true,
+        "saveOnEnter": false
       }
     ]
   },
