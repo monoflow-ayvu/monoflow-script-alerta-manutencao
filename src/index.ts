@@ -34,13 +34,12 @@ messages.on('onPeriodic', function() {
   const myLogin = MonoUtils.currentLogin() || '';
   const myTasks = env.project?.tasksManager?.pendingTasks?.filter(
     (t) =>
-          t.assignedTo in [myId, myLogin, '']
+          [myId, myLogin, ''].includes(t.assignedTo)
       &&  anyTagMatches(t.tags || [], conf.get('tags', []))
   );
 
-  const lastNotificationSecondsSince = (Date.now() - lastNotification) / 1000 / 60;
-
-  if (myTasks.length > 0 && lastNotificationSecondsSince >= conf.get('minutes', 5)) {
+  const lastNotificationMinsSince = (Date.now() - lastNotification) / 1000 / 60;
+  if (myTasks.length > 0 && lastNotificationMinsSince >= conf.get('minutes', 5)) {
     lastNotification = Date.now();
     setUrgentNotification({
       title: conf.get('title', 'Tarefa pendente'),

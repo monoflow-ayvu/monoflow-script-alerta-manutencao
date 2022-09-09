@@ -29,6 +29,8 @@ const testTask = {
   webhooks: []
 }
 
+jest.useFakeTimers();
+
 describe("onInit", () => {
   // clean listeners
   afterEach(() => {
@@ -40,10 +42,83 @@ describe("onInit", () => {
     messages.emit('onInit');
   });
 
-  xit('shows a notification if there is a pending task assigned to us with matching tags', () => { });
-  xit('shows notification again after 5 minutes of user pressing OK', () => { });
+  it('shows a notification if there is a pending task assigned to us with matching tags', () => {
+    getSettings = () => ({
+      tags: ['activity'],
+    });
+    (env.project as any) = {
+      tasksManager: {
+        pendingTasks: [testTask],
+      },
+    };
+    platform.setUrgentNotification = jest.fn();
 
-  xit('only matches if the tags match', () => { });
-  xit('only matches if the assignedTo matches', () => { });
-  xit('only works if there is no notification', () => { });
+    loadScript();
+    messages.emit('onPeriodic');
+    expect(platform.setUrgentNotification).toBeCalledTimes(1);
+    expect((platform.setUrgentNotification as jest.Mock).mock.calls[0][0]).toBeTruthy();
+  });
+
+  it('shows notification again after 5 minutes of user pressing OK', () => {
+    getSettings = () => ({
+      tags: ['activity'],
+    });
+    (env.project as any) = {
+      tasksManager: {
+        pendingTasks: [testTask],
+      },
+    };
+    platform.setUrgentNotification = jest.fn();
+
+    loadScript();
+    jest.setSystemTime(new Date('2022-09-09 00:00:00'));
+    messages.emit('onPeriodic');
+    expect(platform.setUrgentNotification).toBeCalledTimes(1);
+    expect((platform.setUrgentNotification as jest.Mock).mock.calls[0][0]).toBeTruthy();
+
+    // not enough time to show another (needs 5 min by default)
+    jest.setSystemTime(new Date('2022-09-09 00:01:00'));
+    messages.emit('onPeriodic');
+    expect(platform.setUrgentNotification).toBeCalledTimes(1);
+
+    // now it should!
+    jest.setSystemTime(new Date('2022-09-09 00:05:01'));
+    messages.emit('onPeriodic');
+    expect(platform.setUrgentNotification).toBeCalledTimes(2);
+  });
+
+  it('only matches if the tags match', () => {
+    getSettings = () => ({
+      tags: ['not-activity'],
+    });
+    (env.project as any) = {
+      tasksManager: {
+        pendingTasks: [testTask],
+      },
+    };
+    platform.setUrgentNotification = jest.fn();
+
+    loadScript();
+    messages.emit('onPeriodic');
+    expect(platform.setUrgentNotification).toBeCalledTimes(0);
+  });
+
+  it('only matches if the assignedTo matches', () => {
+    getSettings = () => ({
+      tags: ['activity'],
+    });
+    (env.project as any) = {
+      tasksManager: {
+        pendingTasks: [{
+          ...testTask,
+          assignedTo: 'NOT-TEST'
+        }],
+      },
+    };
+    platform.setUrgentNotification = jest.fn();
+
+    loadScript();
+    messages.emit('onPeriodic');
+    expect(platform.setUrgentNotification).toBeCalledTimes(0);
+  });
 });
