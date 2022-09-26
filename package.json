@@ -1,6 +1,6 @@
 {
   "name": "alerta-manutencao",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Script para mostrar uma alerta ao ter tarefas especificas abertas",
   "settingsSchema": {
     "display": "form",
