@@ -57,4 +57,5 @@ messages.on('onPeriodic', function() {
 messages.on('onCall', (id, _payload) => {
   if (id !== OK_ACTION) return;
   lastNotification = Date.now();
+  setUrgentNotification(null);
 });
